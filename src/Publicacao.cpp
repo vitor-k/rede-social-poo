@@ -17,14 +17,12 @@ std::string Publicacao::getTexto() const{
 	return this->texto;
 }
 
-void Publicacao::curtir(Perfil* quemCurtiu){
-	if(quemCurtiu != autor){
-		this->curtidas++;
-	}
-}
-
 int Publicacao::getCurtidas() const{
 	return this->curtidas;
+}
+
+void Publicacao::curtir(){
+	this->curtidas++;
 }
 
 void Publicacao::imprimir() const{
@@ -32,5 +30,3 @@ void Publicacao::imprimir() const{
 	std::cout << "(" << autor->getNome() << ")";
 	std::cout << "[" << curtidas << "]" << std::endl;
 }
-
-

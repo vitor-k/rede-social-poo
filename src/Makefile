@@ -9,7 +9,7 @@ SRCS = $(wildcard *.cpp)
 OBJS = $(SRCS:.cpp=.o)
 DEPS = $(SRCS:.cpp=.d)
 
-EPNAME = EP1
+EPNAME = EP2
 
 CFLAGS = -Wall -pedantic -fexceptions -std=c++11 -g
 OFLAGS = -O2

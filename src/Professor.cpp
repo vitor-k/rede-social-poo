@@ -1,6 +1,9 @@
 #include "Professor.h"
 
-Professor::Professor(int numeroUSP, std::string nome, std::string email, std::string departamento): Perfil(numeroUSP, nome, email){
+Professor::Professor(int numeroUSP, std::string nome, std::string email, std::string departamento): Pessoa(numeroUSP, nome, email){
+	this->departamento = departamento;
+}
+Professor::Professor(int id, int numeroUSP, std::string nome, std::string email, std::string departamento): Pessoa(id, numeroUSP, nome, email){
 	this->departamento = departamento;
 }
 Professor::~Professor(){}
@@ -9,7 +12,8 @@ std::string Professor::getDepartamento() const{
 }
 void Professor::imprimir() const{
 	using namespace std;
-	cout << getNumeroUSP() << " - " << getNome() << endl;
+	cout << getId() << " - " << getNome();
+	cout << getNumeroUSP();
 	cout << "Departamento: " << departamento << endl;
-	cout << "Seguidores: " << getQuantidadeDeSeguidores() << endl;
+	cout << "Seguidores: " << getSeguidores()->size() << endl;
 }

@@ -2,26 +2,28 @@
 #define REDE_SOCIAL_H
 
 #include "Perfil.h"
+#include "Professor.h"
+#include "Disciplina.h"
+#include "Aluno.h"
 #include <iostream>
+#include <string>
+#include <vector>
 
 class RedeSocial{
 	private:
-		const int max_perfis;
-		int n_perfis;
-		
-		Perfil** perfis;
-		
+		std::vector<Perfil*> perfis;
+
 	public:
-		RedeSocial(int numeroMaximoDePerfis);
+		RedeSocial();
 		virtual ~RedeSocial();
-		
-		int getQuantidadeDePerfis() const;
-		Perfil** getPerfis() const;
-		
-		bool adicionar(Perfil* p);
-		
+
+		std::vector<Perfil*>* getPerfis();
+		Perfil* getPerfil(int id) const;
+
+		void adicionar(Perfil* perfil);
+
 		virtual void imprimir() const;
-	
+
 };
 
 #endif

@@ -1,43 +1,49 @@
 #include "Disciplina.h"
 
-Disciplina::Disciplina(std::string nome, Professor* responsavel, Disciplina* preRequisito) : Perfil(0, nome, "")
+Disciplina::Disciplina(std::string nome, Professor* responsavel, Disciplina* preRequisito) : Perfil(nome)
 {
-    this->responsavel =  responsavel;
-    this->preRequisito = preRequisito;
+	this->responsavel =  responsavel;
+	this->preRequisito = preRequisito;
 
-    this->adicionarSeguidor(responsavel);
+	this->adicionarSeguidor(responsavel);
 }
-Disciplina::Disciplina(std::string nome, Professor* responsavel) : Perfil(0, nome, "")
+Disciplina::Disciplina(std::string nome, Professor* responsavel) : Perfil(nome)
 {
-    this->responsavel =  responsavel;
-    this->preRequisito = NULL;
+	this->responsavel =  responsavel;
+	this->preRequisito = nullptr;
 
-    this->adicionarSeguidor(responsavel);
+	this->adicionarSeguidor(responsavel);
+}
+
+Disciplina::Disciplina(int id, std::string nome, Professor* responsavel, Disciplina* preRequisito) : Perfil(id, nome)
+{
+	this->responsavel =  responsavel;
+	this->preRequisito = preRequisito;
 }
 
 Disciplina::~Disciplina(){
-    std::cout << "Disciplina destruida\n";
+	std::cout << "Disciplina destruida\n";
 }
 
 Disciplina* Disciplina::getPreRequisito() const {
-    if(preRequisito != NULL){
-        return preRequisito;
-    }
-    else{
-        return NULL;
-    }
+	if(preRequisito != nullptr){
+		return preRequisito;
+	}
+	else{
+		return NULL;
+	}
 }
 Professor* Disciplina::getResponsavel() const {
-    return responsavel;
+	return responsavel;
 }
 
 bool Disciplina::receber(Publicacao* p){
-	return true;
+	return false;
 }
 
 void Disciplina::imprimir() const{
-    using namespace std;
-    cout << getNumeroUSP() << " - " << getNome() << endl;
-    cout << "Pre-requisito:" << (getPreRequisito() ? getPreRequisito()->getNome() : " - ") << endl;
-    cout << "Seguidores: " << getQuantidadeDeSeguidores() << endl;
+	using namespace std;
+	cout  << getId() << " - " << getNome() <<  endl;
+	cout << "Pre-requisito:" << (getPreRequisito() ? getPreRequisito()->getNome() : " - ") << endl;
+	cout << "Seguidores: " << (getSeguidores())->size() << endl;
 }

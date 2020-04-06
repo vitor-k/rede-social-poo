@@ -1,50 +1,47 @@
 #include "RedeSocial.h"
+#include "IdInvalido.h"
 
-
-RedeSocial::RedeSocial(int numeroMaximoDePerfis) : max_perfis(numeroMaximoDePerfis){
-	n_perfis = 0;
-	
-	perfis = new Perfil*[max_perfis];
+RedeSocial::RedeSocial(){
 }
 RedeSocial::~RedeSocial(){
-	std::cout << "Destrutor de RedeSocial: " << n_perfis << " perfis" << std::endl;
-	for(int i=0; i<n_perfis; i++){
+	std::cout << "Destrutor de RedeSocial: " << perfis.size() << " perfis" << std::endl;
+	for(unsigned int i=0; i<perfis.size(); i++){
 		delete perfis[i];
 	}
-	
-	delete[] perfis;
+}
+std::vector<Perfil*>* RedeSocial::getPerfis(){
+	return &perfis;
 }
 
-int RedeSocial::getQuantidadeDePerfis() const{
-	return n_perfis;
-}
-Perfil** RedeSocial::getPerfis() const{
-	return perfis;
+void RedeSocial::adicionar(Perfil* p){
+	perfis.push_back(p);
 }
 
-bool RedeSocial::adicionar(Perfil* p){
-	if(n_perfis < max_perfis){
-		perfis[n_perfis++] = p;
-		
-		return true;
-	}
-	return false;
+Perfil* RedeSocial::getPerfil(int id) const{
+    if(id <= Perfil::getUltimoId()){
+        for(unsigned int i=0; i<perfis.size();i++){
+            if(perfis[i]->getId() == id){
+                return perfis[i];
+            }
+        }
+
+    }
+    throw IdInvalido();
 }
 
 void RedeSocial::imprimir () const{
 	std::cout << std::endl << "------------------------------ " << std::endl;
-	std::cout << "RedeSocial: " << n_perfis << " perfis" << std::endl;
+	std::cout << "RedeSocial: " << perfis.size() << " perfis" << std::endl;
 	std::cout << "------------------------------ " << std::endl;
-	if (n_perfis == 0){
+	if (perfis.empty()){
 		std::cout << "Sem perfis" << std::endl;
 		std::cout << "------------------------------ " << std::endl;
 	}
 	else{
-		for (int i = 0; i < n_perfis; i++){
+		for (unsigned int i = 0; i < perfis.size(); i++){
 			perfis[i]->imprimir();
 			std::cout << "------------------------------ " << std::endl;
 		}
 	}
 	std::cout << std::endl;
 }
-

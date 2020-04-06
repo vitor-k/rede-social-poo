@@ -9,17 +9,18 @@ class Disciplina : public Perfil{
 	private:
 		Professor* responsavel;
 		Disciplina* preRequisito;
-		
+
 	public:
 		Disciplina(std::string nome, Professor* responsavel);
 		Disciplina(std::string nome, Professor* responsavel, Disciplina* preRequisito);
+		Disciplina(int id, std::string nome, Professor* responsavel, Disciplina* preRequisito);
 		virtual ~Disciplina();
-		
-		Professor* getResponsavel() const;
-		Disciplina* getPreRequisito() const;
-		
+
+		virtual Professor* getResponsavel() const;
+		virtual Disciplina* getPreRequisito() const;
+
 		bool receber(Publicacao* p);
-		
+
 		void imprimir() const;
 };
 

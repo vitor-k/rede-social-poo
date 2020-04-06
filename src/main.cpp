@@ -3,8 +3,13 @@
 #include "Perfil.h"
 #include "RedeSocial.h"
 #include "Professor.h"
+#include "Aluno.h"
 #include "Disciplina.h"
 #include "Publicacao.h"
+#include "PersistenciaDaRede.h"
+#include <vector>
+#include <list>
+
 
 void myScanf(std::string& texto){
 	std::cin.ignore(100, '\n');
@@ -24,15 +29,15 @@ int imprimirTelaPrincipal(){
 	return retorno;
 }
 
-void listarPerfis(RedeSocial& rede){
-	Perfil** perfis = rede.getPerfis();
+void listarPerfis(RedeSocial* rede){
+	std::vector<Perfil*>* perfis = rede->getPerfis();
 
-	for(int i=0; i<rede.getQuantidadeDePerfis(); i++){
-		std::cout << (i+1) << ") " << perfis[i]->getNome() << std::endl;
+	for(unsigned int i=0; i<perfis->size(); i++){
+		std::cout << (*perfis)[i]->getId() << ") " << (*perfis)[i]->getNome() << std::endl;
 	}
 }
 
-void cadastrarPerfil(RedeSocial& rede){
+void cadastrarPerfil(RedeSocial* rede){
 	int nusp;
 	std::string nome, email, resp, depart;
 	Perfil* perf;
@@ -53,15 +58,15 @@ void cadastrarPerfil(RedeSocial& rede){
 		perf = new Professor(nusp, nome, email, depart);
 	}
 	else{  //strings que nao contem nem 's' nem 'n' sao don't care. Podem ser agrupadas com 'n'.
-		perf = new Perfil(nusp, nome, email);
+		perf = new Aluno(nusp, nome, email);
 	}
-	rede.adicionar(perf);
+	rede->adicionar(perf);
 }
 
-void cadastrarDisciplina(RedeSocial& rede){
+void cadastrarDisciplina(RedeSocial* rede){
 	std::string nome;
 	int numResponsavel, numPreRequisito;
-	Perfil** perfis = rede.getPerfis();
+	std::vector<Perfil*>* perfis = rede->getPerfis();
 	Disciplina *disciplina, *preRequisito;
 	Professor *responsavel;
 
@@ -75,7 +80,7 @@ void cadastrarDisciplina(RedeSocial& rede){
 	std::cin >> numResponsavel;
 	if(numResponsavel == 0) return;
 
-	responsavel = dynamic_cast<Professor*>(perfis[numResponsavel-1]);
+	responsavel = dynamic_cast<Professor*>((*perfis)[numResponsavel-1]);
 	if(!responsavel){
 		std::cout << "Somente professores podem ser responsaveis por disciplinas\n";
 		return;
@@ -86,7 +91,7 @@ void cadastrarDisciplina(RedeSocial& rede){
 	std::cout << "Digite o numero ou 0 para nenhum: ";
 	std::cin >> numPreRequisito;
 	if(numPreRequisito){
-		preRequisito = dynamic_cast<Disciplina*>(perfis[numPreRequisito-1]);
+		preRequisito = dynamic_cast<Disciplina*>((*perfis)[numPreRequisito-1]);
 		if(!preRequisito){
 			std::cout << "Pre-requisito deve ser uma disciplina\n";
 			return;
@@ -97,10 +102,10 @@ void cadastrarDisciplina(RedeSocial& rede){
 		disciplina = new Disciplina(nome, responsavel);
 	}
 
-	rede.adicionar(disciplina);
+	rede->adicionar(disciplina);
 }
 
-Perfil* login(RedeSocial& rede){
+Perfil* login(RedeSocial* rede){
 	int numEscolhido;
 	std::cout << "Escolha um perfil:\n";
 	listarPerfis(rede);
@@ -110,30 +115,35 @@ Perfil* login(RedeSocial& rede){
 		return NULL;
 	}
 	else{
-		return rede.getPerfis()[numEscolhido-1];
+		return (*rede->getPerfis())[numEscolhido-1];
 	}
 }
 
 void telaPublicacoesFeitas(Perfil* user){
 	std::cout << "Publicacoes feitas: " << std::endl;
-	Publicacao** feitas = user->getPublicacoesFeitas();
-	for(int i=0; i<user->getQuantidadeDePublicacoesFeitas(); i++){
-		feitas[i]->imprimir();
+	std::list<Publicacao*>* feitas = user->getPublicacoesFeitas();
+	for(Publicacao* pub: (*feitas)){
+		pub->imprimir();
 	}
 }
 void telaPublicacoesRecebidas(Perfil* user){
 	int escolha;
-	Publicacao** recebidas = user->getPublicacoesRecebidas();
+	std::list<Publicacao*>* recebidas = user->getPublicacoesRecebidas();
 
+	int i=0;
 	std::cout << "Publicacoes recebidas: " << std::endl;
-	for(int i=0; i<user->getQuantidadeDePublicacoesRecebidas(); i++){
-		std::cout << i+1 << ") ";
-		recebidas[i]->imprimir();
+	for(Publicacao* pub: (*recebidas)){
+		std::cout << ++i << ") ";
+		pub->imprimir();
 	}
 	std::cout << "Digite o numero da mensagem para curtir ou 0 para voltar: ";
 	std::cin >> escolha;
 	if(escolha){
-		recebidas[escolha-1]->curtir(user);
+		auto it = recebidas->begin();
+		for(i=0;i<escolha-1;i++){
+			it++;
+		}
+		(*it)->curtir(user);
 	}
 }
 void telaFazerPublicacao(Perfil* user){
@@ -156,7 +166,7 @@ void telaFazerPublicacao(Perfil* user){
 	}
 	
 }
-void telaSeguirPerfil(RedeSocial& rede, Perfil* user){
+void telaSeguirPerfil(RedeSocial* rede, Perfil* user){
 	int escolhido;
 
 	std::cout << "Perfil:" << std::endl;
@@ -166,7 +176,7 @@ void telaSeguirPerfil(RedeSocial& rede, Perfil* user){
 	std::cin >> escolhido;
 
 	if(escolhido){
-		rede.getPerfis()[escolhido-1]->adicionarSeguidor(user);
+		(*(rede->getPerfis()))[escolhido-1]->adicionarSeguidor(user);
 	}
 }
 
@@ -183,7 +193,7 @@ void imprimirTelaLogged(Perfil* user){
 	std::cout << "0) Deslogar" <<std::endl;
 }
 
-void loggedIn(RedeSocial& rede, Perfil* user){
+void loggedIn(RedeSocial* rede, Perfil* user){
 	bool deslogar = (user==NULL);
 	int escolha;
 
@@ -213,31 +223,46 @@ void loggedIn(RedeSocial& rede, Perfil* user){
 }
 
 int main(){
-	int tamRede;
 	bool continuar = true;
+	char salvar;
 	int escolha;
+	std::string arquivo;
 
-	std::cout << "Tamanho da rede: ";
-	std::cin >> tamRede;
-	RedeSocial rede(tamRede);
-	
+	std::cout << "Arquivo: ";
+	std::cin >> arquivo;
 
-	while(continuar){
-		escolha = imprimirTelaPrincipal();
-		switch(escolha){
-			case 1:
-				cadastrarPerfil(rede);
-				break;
-			case 2:
-				cadastrarDisciplina(rede);
-				break;
-			case 3:
-				loggedIn(rede, login(rede));
-				break;
-			case 0:
-				continuar = false;
-				break;
+	try{
+		PersistenciaDaRede persistDaRede;
+		RedeSocial* rede = persistDaRede.carregar(arquivo);
+
+		while(continuar){
+			escolha = imprimirTelaPrincipal();
+			switch(escolha){
+				case 1:
+					cadastrarPerfil(rede);
+					break;
+				case 2:
+					cadastrarDisciplina(rede);
+					break;
+				case 3:
+					loggedIn(rede, login(rede));
+					break;
+				case 0:
+					continuar = false;
+					break;
+			}
 		}
+
+		
+		std::cout << "Deseja Salvar? (s/n) ";
+		std::cin >> salvar;
+
+		if(salvar == 's'){
+			persistDaRede.salvar(arquivo, rede);
+		}
+	}
+	catch(std::exception& e){
+		std::cerr << e.what() << std::endl;
 	}
 	
 	return 0;

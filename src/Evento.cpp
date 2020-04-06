@@ -1,3 +1,4 @@
+
 #include "Evento.h"
 
 Evento::Evento(Perfil* autor, std::string data, std::string texto): Publicacao(autor, texto){
@@ -5,7 +6,7 @@ Evento::Evento(Perfil* autor, std::string data, std::string texto): Publicacao(a
 }
 
 Evento::~Evento(){}
-		
+
 std::string Evento::getData() const{
 	return data;
 }
@@ -13,7 +14,11 @@ std::string Evento::getData() const{
 void Evento::imprimir() const{
 	std::cout << data << " - ";
 	Publicacao::imprimir();
-	
+
+}
+
+void Evento::curtir(Perfil* quemCurtiu){
+	Publicacao::curtir();
 }
 // void Evento::imprimir() const{
 	// std::cout << "Evento: " << texto << std::endl;

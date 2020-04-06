@@ -1,3 +1,4 @@
+
 #ifndef EVENTO_H
 #define EVENTO_H
 
@@ -9,9 +10,11 @@ class Evento : public Publicacao{
 	public:
 		Evento(Perfil* autor, std::string data, std::string texto);
 		virtual ~Evento();
-		
+
 		std::string getData() const;
-		
+
+		virtual void curtir(Perfil* quemCurtiu);
+
 		void imprimir() const;
 };
 
