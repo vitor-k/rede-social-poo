@@ -12,8 +12,6 @@ class Professor: public Perfil{
 		virtual ~Professor();
 		
 		std::string getDepartamento() const;
-
-		virtual void imprimir() const;
 };
 
 #endif

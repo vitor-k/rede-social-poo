@@ -1,14 +1,11 @@
 #include "Publicacao.h"
-#include "Perfil.h"
+
 
 Publicacao::Publicacao(Perfil* autor, const std::string& texto){
 	this->autor = autor;
 	this->texto = texto;
-	curtidas = 0;
 }
-Publicacao::~Publicacao(){
-	std::cout << "Destrutor de publicacao: " << texto << std::endl;
-}
+Publicacao::~Publicacao(){}
 
 Perfil* Publicacao::getAutor() const{
 	return this->autor;
@@ -28,9 +25,7 @@ int Publicacao::getCurtidas() const{
 }
 
 void Publicacao::imprimir() const{
-	std::cout << texto;
-	std::cout << "(" << autor->getNome() << ")";
-	std::cout << "[" << curtidas << "]" << std::endl;
+	std::cout << "Teste imprimir publicacao" << std::endl;
 }
 
 

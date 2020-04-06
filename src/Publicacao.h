@@ -3,7 +3,9 @@
 
 #include <string>
 #include <iostream>
+#include <memory>
 
+#include "Perfil.h"
 class Perfil;
 
 class Publicacao{
@@ -11,7 +13,6 @@ class Publicacao{
 		Perfil* autor;
 		std::string texto;
 		int curtidas;
-		
 	public:
 		Publicacao(Perfil* autor, const std::string& texto);
 		virtual ~Publicacao();

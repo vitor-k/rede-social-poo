@@ -1,23 +1,26 @@
 #ifndef REDE_SOCIAL_H
 #define REDE_SOCIAL_H
 
-#include "Perfil.h"
 #include <iostream>
+#include <vector>
+#include <memory>
+#include "Perfil.h"
 
 class RedeSocial{
 	private:
-		const int max_perfis;
+		int max_perfis;
 		int n_perfis;
 		
-		Perfil** perfis;
+		std::vector<std::shared_ptr<Perfil> > perfis;
 		
 	public:
 		RedeSocial(int numeroMaximoDePerfis);
 		virtual ~RedeSocial();
 		
 		int getQuantidadeDePerfis() const;
-		Perfil** getPerfis() const;
+		std::vector<std::shared_ptr<Perfil> > getPerfis() const;
 		
+		bool adicionar(std::shared_ptr<Perfil> p);
 		bool adicionar(Perfil* p);
 		
 		virtual void imprimir() const;

@@ -1,33 +1,20 @@
 #include "Perfil.h"
-#include "Publicacao.h"
-#include "Evento.h"
+
 
 Perfil::Perfil(int numeroUSP, std::string nome, std::string email){
 	this->nusp = numeroUSP;
 	this->nome = nome;
-	this->email = email; //seria bom ter um sanity check, mas nao esta na especificacao
+	this->email = email; //sanity check?
 	
-	seguidores = new Perfil*[MAXIMO_SEGUIDORES];
-	numSeguidores = 0;
+	n_seguidores = 0;
 	
-	feitas = new Publicacao*[MAXIMO_PUBLICACOES];
-	numFeitas = 0;
+	n_feitas = 0;
 	
-	recebidas = new Publicacao*[MAXIMO_PUBLICACOES];
-	numRecebidas = 0;
+	n_recebidas = 0;
 }
 
 Perfil::~Perfil(){
-	std::cout<< "Destrutor de perfil: " << nome << " - Quantidade de publicacoes feitas: " << numFeitas <<std::endl;
-
-    for(int i=0; i<numFeitas; i++){
-        delete feitas[i];
-    }
-	delete[] seguidores;
-	delete[] feitas;
-	delete[] recebidas;
-	
-    std::cout << "Perfil " << nome << " deletado" <<std::endl;
+	std::cout << nome << " was destroyed" << std::endl;
 }
 
 int Perfil::getNumeroUSP() const{
@@ -41,82 +28,89 @@ std::string Perfil::getEmail() const{
 	return this->email;
 }
 
-bool Perfil::adicionarSeguidor(Perfil* seguidor){
-	if(numSeguidores >= MAXIMO_SEGUIDORES || seguidor == this){
+bool Perfil::adicionarSeguidor(std::weak_ptr<Perfil> seguidor){
+	std::shared_ptr<Perfil> shared_seguidor = static_cast<std::shared_ptr<Perfil>>(seguidor);
+	if(n_seguidores >= MAXIMO_SEGUIDORES || shared_seguidor.get() == this){
 		return false;
 	}
-	for(int i=0; i<numSeguidores; i++){
-		if(seguidores[i] == seguidor){
+	for(int i=0; i<n_seguidores; i++){
+		if(std::shared_ptr<Perfil>(seguidores[i]).get() == shared_seguidor.get()){
 			return false;
 		}
 	}
-	seguidores[numSeguidores++] = seguidor;
+	
+	seguidores.push_back(std::weak_ptr<Perfil>(seguidor));
+	n_seguidores++;
 
-	std::string mensagemNovoSeguidor = "Novo seguidor: ";  //implicit string construction from char*
-	mensagemNovoSeguidor.append(seguidor->getNome());
-	Publicacao* pub = new Publicacao(this, mensagemNovoSeguidor);
-	this->receber(pub);
+	std::string mensagemNovoSeguidor = "Novo seguidor: ";  //implicit construction
+	mensagemNovoSeguidor.append(shared_seguidor->getNome());
+	
+	std::shared_ptr<Publicacao> pub{ new Publicacao(this, mensagemNovoSeguidor)};
+	
+	feitas.push_back(pub);
+	n_feitas++;
 	
 	return true;
 }
 
-void Perfil::publicar(Publicacao* p){
-	feitas[numFeitas++] = p;
-	for(int i=0; i < numSeguidores; i++){
-		seguidores[i]->receber(p);
-	}
-}
 bool Perfil::publicar(std::string texto){
-	if(numFeitas < MAXIMO_PUBLICACOES){
-		Publicacao* pub = new Publicacao(this, texto);
-		publicar(pub);
+	if(n_feitas < MAXIMO_PUBLICACOES){
+		std::shared_ptr<Publicacao> pub{ new Publicacao(this , texto)};
+		// feitas[n_feitas++] = pub;
+		feitas.push_back(pub);
+		n_feitas++;
+		
+		for(int i=0; i < n_seguidores; i++){
+			std::shared_ptr<Perfil>(seguidores[i])->receber(pub);
+		}
 		return true;
 	}
-	return false;
-}
-bool Perfil::publicar(std::string texto, std::string data){
-	if(numFeitas < MAXIMO_PUBLICACOES){
-		Publicacao* pub = new Evento(this, data, texto);
-		publicar(pub);
-		return true;
+	else{
+		return false;
 	}
-	return false;
 }
+// bool Perfil::publicar(std::string texto, std::string data);
 
-bool Perfil::receber(Publicacao* p){
-	if(numRecebidas >= MAXIMO_PUBLICACOES){
+bool Perfil::receber(std::weak_ptr<Publicacao> p){
+	if(n_recebidas >= MAXIMO_PUBLICACOES){
 		return false;
 	}
 	
-	recebidas[numRecebidas++] = p;
+	recebidas.push_back(p);
+	n_recebidas++;
 	
 	return true;
 }
 
-Publicacao** Perfil::getPublicacoesFeitas() const{
-	return feitas;
+std::vector<std::shared_ptr<Publicacao> > Perfil::getPublicacoesFeitas() const{
+	return this->feitas;
 }
 int Perfil::getQuantidadeDePublicacoesFeitas() const{
-	return this->numFeitas;
+	return this->n_feitas;
 }
 
-Publicacao** Perfil::getPublicacoesRecebidas() const{
-	return recebidas;
+std::vector<std::weak_ptr<Publicacao> > Perfil::getPublicacoesRecebidas() const{
+	return this->recebidas;
 }
 int Perfil::getQuantidadeDePublicacoesRecebidas() const{
-	return this->numRecebidas;
+	return this->n_recebidas;
 }
 
-Perfil** Perfil::getSeguidores() const{
-	return seguidores;
+std::vector<std::weak_ptr<Perfil> > Perfil::getSeguidores() const{
+	return this->seguidores;
 }
 int Perfil::getQuantidadeDeSeguidores() const{
-	return this->numSeguidores;
+	return this->n_seguidores;
 }
 
 void Perfil::imprimir() const{
-    using namespace std;
-	cout << nusp << " - " << nome << endl;
-	cout << "Seguidores: " << numSeguidores << endl;
-
+	std::cout << "Ola, meu nome eh " << nome << std::endl;
+	std::cout << "Numero usp: " << nusp << std::endl;
+	std::cout << "email: " << email << std::endl;
+	
+	for(int i=0; i<n_feitas; i++){
+		std::cout << std::shared_ptr<Publicacao>(feitas[i])->getTexto() << std::endl;
+	}
 }
+
+

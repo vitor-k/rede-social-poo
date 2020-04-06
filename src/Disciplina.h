@@ -1,9 +1,9 @@
 #ifndef DISCIPLINA_H
 #define DISCIPLINA_H
 
-#include <string>
 #include "Perfil.h"
 #include "Professor.h"
+#include <string>
 
 class Disciplina : public Perfil{
 	private:
@@ -17,11 +17,7 @@ class Disciplina : public Perfil{
 		
 		Professor* getResponsavel() const;
 		Disciplina* getPreRequisito() const;
-		
-		bool receber(Publicacao* p);
-		
-		void imprimir() const;
-};
+}
 
 
 #endif

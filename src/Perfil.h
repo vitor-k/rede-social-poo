@@ -4,9 +4,12 @@
 #define MAXIMO_SEGUIDORES 20
 #define MAXIMO_PUBLICACOES 20
 
+#include <memory>
 #include <string>
 #include <iostream>
+#include <vector>
 
+#include "Publicacao.h"
 class Publicacao;
 
 class Perfil{
@@ -15,16 +18,14 @@ class Perfil{
 		std::string nome;
 		std::string email;
 		
-		Perfil** seguidores;
-		int numSeguidores;
+		std::vector<std::weak_ptr<Perfil> > seguidores;
+		int n_seguidores;
 		
-		Publicacao** feitas;
-		int numFeitas;
+		std::vector<std::shared_ptr<Publicacao> > feitas;
+		int n_feitas;
 		
-		Publicacao** recebidas;
-		int numRecebidas;
-		
-		virtual void publicar(Publicacao* p);
+		std::vector<std::weak_ptr<Publicacao> > recebidas;
+		int n_recebidas;
 	public:
 		Perfil(int numeroUSP, std::string nome, std::string email);
 		virtual ~Perfil();
@@ -33,23 +34,24 @@ class Perfil{
 		std::string getNome() const;
 		std::string getEmail() const;
 
-		virtual bool adicionarSeguidor(Perfil* seguidor);
+		virtual bool adicionarSeguidor(std::weak_ptr<Perfil> seguidor);
 
 		virtual bool publicar(std::string texto);
-		virtual bool publicar(std::string texto, std::string data);
+		// virtual bool publicar(std::string texto, std::string data);
 
-		virtual bool receber(Publicacao* p);
+		virtual bool receber(std::weak_ptr<Publicacao> p);
 
-		virtual Publicacao** getPublicacoesFeitas() const;
+		virtual std::vector<std::shared_ptr<Publicacao> > getPublicacoesFeitas() const;
 		virtual int getQuantidadeDePublicacoesFeitas() const;
 
-		virtual Publicacao** getPublicacoesRecebidas() const;
+		virtual std::vector<std::weak_ptr<Publicacao> > getPublicacoesRecebidas() const;
 		virtual int getQuantidadeDePublicacoesRecebidas() const;
 
-		virtual Perfil** getSeguidores() const;
+		virtual std::vector<std::weak_ptr<Perfil> > getSeguidores() const;
 		virtual int getQuantidadeDeSeguidores() const;
 
 		virtual void imprimir() const;
+
 };
 
 #endif 
