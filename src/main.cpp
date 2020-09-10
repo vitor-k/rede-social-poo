@@ -232,8 +232,7 @@ int main(){
 	std::cin >> arquivo;
 
 	try{
-		PersistenciaDaRede persistDaRede;
-		RedeSocial* rede = persistDaRede.carregar(arquivo);
+		RedeSocial* rede = PersistenciaDaRede::carregar(arquivo);
 
 		while(continuar){
 			escolha = imprimirTelaPrincipal();
@@ -258,7 +257,7 @@ int main(){
 		std::cin >> salvar;
 
 		if(salvar == 's'){
-			persistDaRede.salvar(arquivo, rede);
+			PersistenciaDaRede::salvar(arquivo, rede);
 		}
 	}
 	catch(std::exception& e){
