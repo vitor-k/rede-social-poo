@@ -1,13 +1,14 @@
 #ifndef REDE_SOCIAL_H
 #define REDE_SOCIAL_H
 
-#include "Perfil.h"
 #include "Professor.h"
 #include "Disciplina.h"
 #include "Aluno.h"
 #include <iostream>
 #include <string>
 #include <vector>
+
+class Perfil;
 
 class RedeSocial{
 	private:

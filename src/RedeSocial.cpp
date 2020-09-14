@@ -1,4 +1,5 @@
 #include "RedeSocial.h"
+#include "Perfil.h"
 #include "IdInvalido.h"
 
 RedeSocial::RedeSocial(){
